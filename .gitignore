@@ -1,0 +1,7 @@
+# Anotações locais do projeto
+/Obsidian/
+
+# Variáveis de ambiente locais
+.env
+.env.*
+!.env.example
