@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: cuidado-feminino-api
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+server:
+  address: 127.0.0.1
