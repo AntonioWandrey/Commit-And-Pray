@@ -5,3 +5,24 @@
 .env
 .env.*
 !.env.example
+
+# Arquivos locais de editor e do sistema
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Dependências e arquivos gerados
+target/
+node_modules/
+.expo/
+dist/
+*.apk
+*.aab
+*.ipa
+
+# Configuração privada da API
+application-local.properties
+application-local.yml
+application-local.yaml
