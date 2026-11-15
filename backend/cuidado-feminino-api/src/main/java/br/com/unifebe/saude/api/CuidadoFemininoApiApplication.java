@@ -1,4 +1,4 @@
-package Cuidado.Feminino.API;
+package br.com.unifebe.saude.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
