@@ -59,7 +59,7 @@ Recomendação: APROVADO / REPROVADO
 | M2 | Núcleo conversacional desacoplado | Em revisão | [PR #12](https://github.com/AntonioWandrey/Commit-And-Pray/pull/12); módulo sem DOM e adaptador simulado, aguardando auditoria |
 | M3 | Integrar o simulador ao serviço do Histórico | Aguardando | Depende de serviço e contrato confirmados; a integração foi movida para esta missão |
 | M4 | Validar o fluxo integrado e preparar a demonstração | Aguardando | Depende de M3 aprovada; usar dados sintéticos |
-| M5 | Adaptador para WhatsApp | Fora do piloto | Exige ambiente de teste e nova aprovação |
+| M5 | Adaptador para WhatsApp | Fora do piloto | API escolhida: [WPPConnect Server](https://github.com/wppconnect-team/wppconnect-server); implementação depende dos pré-requisitos da M5 |
 | M6 | Autoatendimento, dicas e orientação | Fora do piloto | Exige conteúdo revisado e nova aprovação |
 
 Estados permitidos: **Aguardando**, **Em andamento**, **Em revisão**, **Aprovada**, **Reprovada**, **Bloqueada** e **Fora do piloto**. Ao mudar um estado, registrar a evidência e a decisão da revisão na tabela de histórico no fim desta nota.
@@ -143,7 +143,9 @@ Use somente os valores fornecidos. Se algum estiver faltando, pare nesse limite 
 
 ## M5 — Adaptador para WhatsApp (fora do piloto)
 
-Não iniciar até o simulador integrado estar aprovado, existir ambiente de teste do canal e Arthur aprovar esta missão. Quando aberta, limitar o trabalho ao transporte de mensagens entre WhatsApp e o mesmo serviço do Histórico; preservar identificador de mensagem, remetente, horário com fuso e idempotência.
+**API escolhida por Arthur:** [WPPConnect Server](https://github.com/wppconnect-team/wppconnect-server) para a futura integração do canal. Esta decisão registra a tecnologia; não abre a missão nem altera o escopo do piloto. O VENDRA usa `whatsapp-web.js`, uma integração diferente.
+
+Não iniciar até o simulador integrado estar aprovado, existir ambiente de teste do canal e Arthur abrir esta missão. Quando aberta, limitar o trabalho ao transporte de mensagens entre WhatsApp e o mesmo serviço do Histórico; preservar identificador de mensagem, remetente, horário com fuso e idempotência.
 
 ## M6 — Autoatendimento, dicas e orientação (fora do piloto)
 
@@ -157,3 +159,4 @@ Não iniciar até Arthur aprovar o escopo e a equipe fornecer conteúdo e fontes
 | 2026-11-15 | M1 — Simulador local | Em revisão | PR #8 aberta; aguarda auditoria dos critérios M1. | — |
 | 2026-11-16 | M1 — Simulador local | Aprovada | PR #8 mesclada em `main`; critérios M1 conferidos estaticamente: duas ações, opções guiadas e fictícias, prévia sem persistência, instruções e reinício. Não houve verificação de runtime. | — |
 | 2026-11-16 | M2 — Núcleo conversacional | Em revisão | [PR #12](https://github.com/AntonioWandrey/Commit-And-Pray/pull/12) aberta com módulo conversacional independente do DOM e adaptador simulado; critérios M2 registrados nesta sessão. | — |
+| 2026-11-16 | M5 — Escolha da API | WPPConnect Server escolhido para a futura integração WhatsApp; M5 segue fora do piloto e não foi iniciada. | Decisão explícita de Arthur; integração depende da conclusão/aprovação do Histórico, ambiente de teste e abertura da missão. | Arthur |
