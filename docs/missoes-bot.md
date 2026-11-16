@@ -56,7 +56,7 @@ Recomendação: APROVADO / REPROVADO
 | ID | Missão | Estado | Dependência ou referência |
 | --- | --- | --- | --- |
 | M1 | Simulador local de humor e queixa | Em revisão | [PR #8](https://github.com/AntonioWandrey/Commit-And-Pray/pull/8) |
-| M2 | Conectar o simulador ao serviço do Histórico | Aguardando | Arthur e Pietro estão preparando o serviço e o contrato |
+| M2 | Conectar o simulador ao serviço do Histórico | Aguardando | PR #7 prepara contas e requisitos, mas ainda falta o serviço do Histórico e seu contrato |
 | M3 | Validar o fluxo integrado e preparar a demonstração | Aguardando | Depende de M2 aprovada; usar dados sintéticos |
 | M4 | Adaptador para WhatsApp | Fora do piloto | Exige ambiente de teste e nova aprovação |
 | M5 | Autoatendimento, dicas e orientação | Fora do piloto | Exige conteúdo revisado e nova aprovação |
@@ -88,7 +88,16 @@ Estados permitidos: **Aguardando**, **Em andamento**, **Em revisão**, **Aprovad
 
 **Estado:** Aguardando. Não iniciar a sessão de codificação até o serviço e o contrato estarem disponíveis e confirmados.
 
-**Entrada obrigatória para abrir a sessão:** rota e método, formato de requisição e resposta, autenticação ou vínculo de remetente, erros esperados e ambiente local de teste. O Codex deve usar esses valores fornecidos; não deve adivinhar nenhum deles.
+**Situação encontrada:** [PR #7](https://github.com/AntonioWandrey/Commit-And-Pray/pull/7) está aberta para `dev`. Ela adiciona a migração inicial de contas (`ubs`, `perfil`, `usuario` e `usuario_perfil`) e documentação de requisitos; a PR informa que não altera código de aplicação. A migração ainda não inclui entradas de humor/queixa nem vínculo entre remetente de canal e usuário. A API também ainda não expõe a operação do Histórico para o bot.
+
+**Entrada obrigatória para abrir a sessão:**
+
+- A PR ou branch que contém o serviço e qual branch será a base do trabalho do bot (`dev` ou `main`). Hoje a PR #7 mira `dev` e a PR #8 do simulador mira `main`.
+- A forma de integração escolhida para o simulador e a API; se for HTTP, informar rota, método e origem local.
+- Formato de requisição e resposta, autenticação ou vínculo de remetente, respostas de erro e ambiente local de teste.
+- Comportamento acordado para reenvio/idempotência e para remetente sem vínculo.
+
+O Codex deve usar esses valores fornecidos; não deve adivinhar nenhum deles. Se algum estiver faltando, a sessão deve parar nesse limite e reportar o bloqueio.
 
 **Critérios de aceite:**
 
