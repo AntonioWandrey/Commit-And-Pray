@@ -2,7 +2,11 @@
 
 Projeto de saúde feminina para a trilha Saúde e Bem-Estar. A demonstração prevista registra humor e queixas por conversa e apresenta esses registros no histórico do aplicativo React Native.
 
-A base transferida do Cuidado Feminino está em [backend/cuidado-feminino-api](backend/cuidado-feminino-api). Ela usa Java 21, Spring Boot, Maven Wrapper e MySQL. O app React Native e o bot fazem parte das próximas etapas. O [guia de transferência e chatbot](docs/transplante-e-chatbot.md) descreve a base, a ordem de implementação e como começar o bot local.
+A base transferida do Cuidado Feminino está em [backend/cuidado-feminino-api](backend/cuidado-feminino-api). Ela usa Java 21, Spring Boot, Maven Wrapper e MySQL. O app React Native e o bot fazem parte das próximas etapas. O [guia de transferência e chatbot](docs/transplante-e-chatbot.md) descreve a base e a ordem de implementação. O [simulador local do bot](tools/simulador-bot/README.md) demonstra o primeiro fluxo sem depender do serviço do Histórico.
+
+## Simular a conversa localmente
+
+Abra `tools/simulador-bot/index.html` em um navegador. O protótipo oferece as ações **Registrar humor** e **Registrar queixa**, usando apenas opções fictícias. Ele monta uma prévia local do evento, sem enviar dados nem salvar no Histórico.
 
 ## Rodar a API localmente
 

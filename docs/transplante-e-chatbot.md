@@ -1,6 +1,6 @@
 # Transferência do Cuidado Feminino e início do chatbot
 
-O primeiro fluxo de demonstração é uma conversa com uma conta fictícia. A pessoa informa como está se sentindo, registra uma queixa e vê as duas entradas no app. Cada entrada mostra data, tipo e origem. A conversa pode começar num simulador local ligado ao mesmo serviço de registros que o futuro adaptador do WhatsApp usará.
+O primeiro fluxo de demonstração é uma conversa com uma conta fictícia. A pessoa informa como está se sentindo, registra uma queixa e vê as duas entradas no app. Cada entrada mostra data, tipo e origem. A conversa começa num simulador local com respostas simuladas; depois será ligada ao mesmo serviço de registros que o futuro adaptador do WhatsApp usará. O [simulador atual](../tools/simulador-bot/README.md) gera prévias fictícias e ainda não grava no Histórico.
 
 ## O que a base oferece
 
