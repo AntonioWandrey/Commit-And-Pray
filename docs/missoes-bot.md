@@ -55,7 +55,7 @@ Recomendação: APROVADO / REPROVADO
 
 | ID | Missão | Estado | Dependência ou referência |
 | --- | --- | --- | --- |
-| M1 | Simulador local de humor e queixa | Em revisão | [PR #8](https://github.com/AntonioWandrey/Commit-And-Pray/pull/8) |
+| M1 | Simulador local de humor e queixa | Aprovada | [PR #8](https://github.com/AntonioWandrey/Commit-And-Pray/pull/8) mesclada em `main`; critérios conferidos estaticamente |
 | M2 | Núcleo conversacional desacoplado | Em revisão | [PR #12](https://github.com/AntonioWandrey/Commit-And-Pray/pull/12); módulo sem DOM e adaptador simulado, aguardando auditoria |
 | M3 | Integrar o simulador ao serviço do Histórico | Aguardando | Depende de serviço e contrato confirmados; a integração foi movida para esta missão |
 | M4 | Validar o fluxo integrado e preparar a demonstração | Aguardando | Depende de M3 aprovada; usar dados sintéticos |
@@ -68,7 +68,7 @@ Estados permitidos: **Aguardando**, **Em andamento**, **Em revisão**, **Aprovad
 
 **Objetivo:** permitir demonstrar as duas ações do bot em um navegador sem depender do backend.
 
-**Estado:** Em revisão na PR #8. O escopo desta missão está fechado; a auditoria deve comparar a implementação com os critérios abaixo.
+**Estado:** Aprovada. A PR #8 foi mesclada em `main`; os critérios foram conferidos estaticamente. Não houve verificação de runtime.
 
 **Critérios de aceite:**
 
@@ -155,4 +155,5 @@ Não iniciar até Arthur aprovar o escopo e a equipe fornecer conteúdo e fontes
 | --- | --- | --- | --- | --- |
 | 2026-11-15 | Escopo do bot | Aprovado | Duas ações no piloto; exemplos fictícios; respostas simuladas até o serviço do Histórico estar pronto; autoatendimento e orientação ficam para depois. | Arthur |
 | 2026-11-15 | M1 — Simulador local | Em revisão | PR #8 aberta; aguarda auditoria dos critérios M1. | — |
+| 2026-11-16 | M1 — Simulador local | Aprovada | PR #8 mesclada em `main`; critérios M1 conferidos estaticamente: duas ações, opções guiadas e fictícias, prévia sem persistência, instruções e reinício. Não houve verificação de runtime. | — |
 | 2026-11-16 | M2 — Núcleo conversacional | Em revisão | [PR #12](https://github.com/AntonioWandrey/Commit-And-Pray/pull/12) aberta com módulo conversacional independente do DOM e adaptador simulado; critérios M2 registrados nesta sessão. | — |
