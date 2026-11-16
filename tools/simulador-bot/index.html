@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f6f3ff">
+    <title>Simulador do bot · CommitAndPray</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="page-header">
+        <a class="brand" href="#inicio" aria-label="CommitAndPray, início">
+          <span class="brand-mark" aria-hidden="true">C</span>
+          <span>CommitAndPray</span>
+        </a>
+        <span class="demo-pill"><span class="status-dot" aria-hidden="true"></span>Simulador local</span>
+      </header>
+
+      <section class="intro" id="inicio" aria-labelledby="page-title">
+        <p class="eyebrow">Piloto do dia 20</p>
+        <h1 id="page-title">Seu check-in, em uma conversa.</h1>
+        <p class="intro-copy">Escolha como quer registrar sua entrada. Este protótipo usa apenas exemplos fictícios.</p>
+      </section>
+
+      <section class="demo-notice" aria-label="Limites da demonstração">
+        <span class="notice-icon" aria-hidden="true">i</span>
+        <p><strong>Modo de demonstração.</strong> Nada é enviado ou salvo no Histórico. Não informe dados reais.</p>
+      </section>
+
+      <div class="demo-layout">
+        <section class="chat-card" aria-labelledby="chat-title">
+          <div class="chat-header">
+            <div class="bot-avatar" aria-hidden="true">♡</div>
+            <div class="chat-heading">
+              <h2 id="chat-title">Assistente de bem-estar</h2>
+              <p><span class="online-dot" aria-hidden="true"></span>simulação ativa</p>
+            </div>
+            <span class="privacy-label">Conta fictícia</span>
+          </div>
+
+          <ol class="messages" id="messages" role="log" aria-live="polite" aria-relevant="additions text"></ol>
+
+          <div class="choice-area" id="choices" aria-label="Opções da conversa"></div>
+
+          <div class="chat-footer">
+            <span class="lock-icon" aria-hidden="true">◆</span>
+            <span>Simulador local · sem conexão com serviços</span>
+          </div>
+        </section>
+
+        <aside class="side-column" aria-label="Dados da simulação">
+          <section class="info-card account-card">
+            <p class="card-label">Cenário de teste</p>
+            <dl class="account-details">
+              <div><dt>Conta</dt><dd>conta-demo-001</dd></div>
+              <div><dt>Remetente</dt><dd>simulador-001</dd></div>
+              <div><dt>Canal</dt><dd>local</dd></div>
+            </dl>
+          </section>
+
+          <section class="info-card preview-card" aria-labelledby="preview-title">
+            <div class="preview-heading">
+              <div>
+                <p class="card-label">Desenvolvimento</p>
+                <h2 id="preview-title">Prévia da entrada</h2>
+              </div>
+              <span class="preview-tag">não persistida</span>
+            </div>
+            <p class="preview-empty" id="preview-empty">Complete uma opção para gerar uma prévia fictícia do contrato.</p>
+            <pre class="payload" id="payload" hidden><code></code></pre>
+          </section>
+
+          <p class="later-note"><span aria-hidden="true">↗</span> Autoatendimento e orientação entram em uma próxima etapa.</p>
+        </aside>
+      </div>
+
+      <footer class="page-footer">
+        <span>CommitAndPray · protótipo para demonstração</span>
+        <button class="reset-button" id="reset" type="button">Reiniciar conversa</button>
+      </footer>
+    </main>
+  </body>
+</html>
