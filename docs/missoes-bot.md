@@ -1,6 +1,6 @@
 ---
 projeto: CommitAndPray
-atualizado: 2026-11-15
+atualizado: 2026-11-16
 status: em-andamento
 area: bot
 tags:
@@ -56,10 +56,11 @@ Recomendação: APROVADO / REPROVADO
 | ID | Missão | Estado | Dependência ou referência |
 | --- | --- | --- | --- |
 | M1 | Simulador local de humor e queixa | Em revisão | [PR #8](https://github.com/AntonioWandrey/Commit-And-Pray/pull/8) |
-| M2 | Conectar o simulador ao serviço do Histórico | Aguardando | PR #7 prepara contas e requisitos, mas ainda falta o serviço do Histórico e seu contrato |
-| M3 | Validar o fluxo integrado e preparar a demonstração | Aguardando | Depende de M2 aprovada; usar dados sintéticos |
-| M4 | Adaptador para WhatsApp | Fora do piloto | Exige ambiente de teste e nova aprovação |
-| M5 | Autoatendimento, dicas e orientação | Fora do piloto | Exige conteúdo revisado e nova aprovação |
+| M2 | Núcleo conversacional desacoplado | Em revisão | Implementação desta sessão; módulo sem DOM e adaptador simulado, aguardando auditoria |
+| M3 | Integrar o simulador ao serviço do Histórico | Aguardando | Depende de serviço e contrato confirmados; a integração foi movida para esta missão |
+| M4 | Validar o fluxo integrado e preparar a demonstração | Aguardando | Depende de M3 aprovada; usar dados sintéticos |
+| M5 | Adaptador para WhatsApp | Fora do piloto | Exige ambiente de teste e nova aprovação |
+| M6 | Autoatendimento, dicas e orientação | Fora do piloto | Exige conteúdo revisado e nova aprovação |
 
 Estados permitidos: **Aguardando**, **Em andamento**, **Em revisão**, **Aprovada**, **Reprovada**, **Bloqueada** e **Fora do piloto**. Ao mudar um estado, registrar a evidência e a decisão da revisão na tabela de histórico no fim desta nota.
 
@@ -82,22 +83,39 @@ Estados permitidos: **Aguardando**, **Em andamento**, **Em revisão**, **Aprovad
 
 **Fora desta missão:** conectar o backend, gravar Histórico, aceitar dados reais, criar dicas ou adicionar outras opções.
 
-## M2 — Conectar ao serviço do Histórico
+## M2 — Núcleo conversacional desacoplado
 
-**Objetivo:** trocar a prévia local pela chamada ao serviço que Arthur e Pietro estão preparando.
+**Objetivo:** separar a lógica conversacional da interface e manter uma resposta simulada que possa ser substituída pela integração com o Histórico.
 
-**Estado:** Aguardando. Não iniciar a sessão de codificação até o serviço e o contrato estarem disponíveis e confirmados.
+**Estado:** Em revisão nesta branch. A aprovação depende da auditoria dos critérios abaixo.
 
-**Situação encontrada:** [PR #7](https://github.com/AntonioWandrey/Commit-And-Pray/pull/7) está aberta para `dev`. Ela adiciona a migração inicial de contas (`ubs`, `perfil`, `usuario` e `usuario_perfil`) e documentação de requisitos; a PR informa que não altera código de aplicação. A migração ainda não inclui entradas de humor/queixa nem vínculo entre remetente de canal e usuário. A API também ainda não expõe a operação do Histórico para o bot.
+**Critérios de aceite:**
+
+- A lógica de conversa, validação e montagem do evento fica em um módulo JavaScript independente do DOM; a interface chama esse módulo.
+- A interface mantém somente **Registrar humor** e **Registrar queixa**, com as opções de humor e os exemplos fictícios já existentes no simulador.
+- A validação aceita somente os valores guiados de humor e os exemplos fictícios de queixa; o campo do evento corresponde ao tipo (`humor` ou `relato`).
+- O evento contém `mensagemId`, `remetenteRef`, `recebidaEm` com data, hora e fuso, `tipo` e somente o campo de conteúdo correspondente.
+- O adaptador usado pela interface identifica a resposta como simulada e `persisted: false`; não faz chamadas de rede nem grava em armazenamento.
+- O simulador continua abrindo pelo `index.html` local, sem servidor nem dependências novas, e permite reiniciar a conversa.
+
+**Fora desta missão:** integrar API ou banco, persistir dados, definir rota, autenticação ou schema, alterar o serviço que Arthur e Pietro estão preparando, conectar WhatsApp ou adicionar novas opções conversacionais.
+
+## M3 — Integrar o simulador ao serviço do Histórico
+
+**Objetivo:** substituir o adaptador simulado pela integração acordada com o serviço do Histórico, sem alterar o núcleo conversacional nem inventar contrato.
+
+**Estado:** Aguardando. Iniciar somente quando o serviço e seu contrato estiverem disponíveis e confirmados.
+
+**Dependência registrada:** [PR #7](https://github.com/AntonioWandrey/Commit-And-Pray/pull/7) prepara a migração inicial de contas (`ubs`, `perfil`, `usuario` e `usuario_perfil`) e documentação de requisitos, mas o quadro ainda registra como pendentes o serviço do Histórico, as entradas de humor/queixa e o vínculo entre remetente de canal e usuário. A sessão de M3 deve confirmar o estado antes de iniciar.
 
 **Entrada obrigatória para abrir a sessão:**
 
-- A PR ou branch que contém o serviço e qual branch será a base do trabalho do bot (`dev` ou `main`). Hoje a PR #7 mira `dev` e a PR #8 do simulador mira `main`.
+- A PR ou branch que contém o serviço e qual branch será a base do trabalho do bot (`dev` ou `main`).
 - A forma de integração escolhida para o simulador e a API; se for HTTP, informar rota, método e origem local.
 - Formato de requisição e resposta, autenticação ou vínculo de remetente, respostas de erro e ambiente local de teste.
 - Comportamento acordado para reenvio/idempotência e para remetente sem vínculo.
 
-O Codex deve usar esses valores fornecidos; não deve adivinhar nenhum deles. Se algum estiver faltando, a sessão deve parar nesse limite e reportar o bloqueio.
+Use somente os valores fornecidos. Se algum estiver faltando, pare nesse limite e reporte o bloqueio.
 
 **Critérios de aceite:**
 
@@ -108,11 +126,11 @@ O Codex deve usar esses valores fornecidos; não deve adivinhar nenhum deles. Se
 - Reenvio da mesma mensagem não duplica a entrada, conforme a idempotência implementada pelo serviço.
 - A missão não altera o schema ou o serviço do Histórico sem uma tarefa separada.
 
-## M3 — Validar o fluxo integrado e preparar a demonstração
+## M4 — Validar o fluxo integrado e preparar a demonstração
 
 **Objetivo:** conferir o percurso do simulador até o Histórico com dados inteiramente sintéticos.
 
-**Estado:** Aguardando M2 aprovada.
+**Estado:** Aguardando M3 aprovada.
 
 **Critérios de aceite:**
 
@@ -123,11 +141,11 @@ O Codex deve usar esses valores fornecidos; não deve adivinhar nenhum deles. Se
 - Simular indisponibilidade do serviço e conferir que o bot não acusa sucesso.
 - Registrar instruções reproduzíveis para a demonstração do piloto.
 
-## M4 — Adaptador para WhatsApp (fora do piloto)
+## M5 — Adaptador para WhatsApp (fora do piloto)
 
 Não iniciar até o simulador integrado estar aprovado, existir ambiente de teste do canal e Arthur aprovar esta missão. Quando aberta, limitar o trabalho ao transporte de mensagens entre WhatsApp e o mesmo serviço do Histórico; preservar identificador de mensagem, remetente, horário com fuso e idempotência.
 
-## M5 — Autoatendimento, dicas e orientação (fora do piloto)
+## M6 — Autoatendimento, dicas e orientação (fora do piloto)
 
 Não iniciar até Arthur aprovar o escopo e a equipe fornecer conteúdo e fontes revisados. Uma missão futura deve definir tópicos, responsável por revisão, fonte e data de atualização, fallback para informação ausente e limites de segurança. Não incluir diagnóstico, prescrição ou classificação de urgência sem uma decisão e validação separadas.
 
@@ -137,3 +155,4 @@ Não iniciar até Arthur aprovar o escopo e a equipe fornecer conteúdo e fontes
 | --- | --- | --- | --- | --- |
 | 2026-11-15 | Escopo do bot | Aprovado | Duas ações no piloto; exemplos fictícios; respostas simuladas até o serviço do Histórico estar pronto; autoatendimento e orientação ficam para depois. | Arthur |
 | 2026-11-15 | M1 — Simulador local | Em revisão | PR #8 aberta; aguarda auditoria dos critérios M1. | — |
+| 2026-11-16 | M2 — Núcleo conversacional | Em revisão | Módulo conversacional independente do DOM e adaptador simulado adicionados ao simulador; critérios M2 registrados nesta sessão. | — |

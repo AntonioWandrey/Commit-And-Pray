@@ -5,21 +5,9 @@ const payload = document.querySelector("#payload");
 const payloadCode = payload.querySelector("code");
 const resetButton = document.querySelector("#reset");
 
-const DEMO_SENDER = "simulador-001";
-let nextDemoMessage = 1;
-
-const moodOptions = [
-  { label: "Bem", value: "bem" },
-  { label: "Normal", value: "normal" },
-  { label: "Cansada", value: "cansada" },
-  { label: "Desconfortável", value: "desconfortavel" },
-];
-
-const fictionalComplaints = [
-  { label: "Cólicas leves pela manhã", value: "Exemplo fictício: senti cólicas leves pela manhã." },
-  { label: "Desconforto abdominal leve", value: "Exemplo fictício: percebi um desconforto abdominal leve depois do almoço." },
-  { label: "Dor de cabeça após um dia longo", value: "Exemplo fictício: tive dor de cabeça depois de um dia longo." },
-];
+const conversation = BotConversation.createConversation({
+  responseAdapter: BotConversation.createSimulatedResponseAdapter(),
+});
 
 function addMessage(kind, text) {
   const item = document.createElement("li");
@@ -32,6 +20,10 @@ function addMessage(kind, text) {
   messages.scrollTop = messages.scrollHeight;
 }
 
+function addMessages(items) {
+  items.forEach(({ kind, text }) => addMessage(kind, text));
+}
+
 function makeButton(label, onClick, variant = "") {
   const button = document.createElement("button");
   button.type = "button";
@@ -42,30 +34,19 @@ function makeButton(label, onClick, variant = "") {
 }
 
 function showMainActions() {
-  choices.replaceChildren(
-    makeButton("Registrar humor", startMoodFlow, "primary"),
-    makeButton("Registrar queixa", startComplaintFlow, "secondary"),
-  );
-}
-
-function isoWithTimezone(date = new Date()) {
-  const offsetMinutes = -date.getTimezoneOffset();
-  const sign = offsetMinutes >= 0 ? "+" : "-";
-  const absoluteOffset = Math.abs(offsetMinutes);
-  const offset = `${sign}${String(Math.floor(absoluteOffset / 60)).padStart(2, "0")}:${String(absoluteOffset % 60).padStart(2, "0")}`;
-  const localDateTime = new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 19);
-  return `${localDateTime}${offset}`;
-}
-
-function buildDemoEvent(tipo, field, value) {
-  const sequence = String(nextDemoMessage++).padStart(3, "0");
-  return {
-    mensagemId: `demo-${sequence}`,
-    remetenteRef: DEMO_SENDER,
-    recebidaEm: isoWithTimezone(),
-    tipo,
-    [field]: value,
+  const handlers = {
+    mood: startMoodFlow,
+    complaint: startComplaintFlow,
   };
+
+  choices.replaceChildren(...conversation.mainActions().map(({ label, value }) => (
+    makeButton(label, handlers[value], value === "mood" ? "primary" : "secondary")
+  )));
+}
+
+function showOptions(flow, result) {
+  addMessages(result.messages);
+  choices.replaceChildren(...result.options.map(({ label, value }) => makeButton(label, () => submitSelection(flow, value, label))));
 }
 
 function showPreview(event) {
@@ -74,41 +55,39 @@ function showPreview(event) {
   payloadCode.textContent = JSON.stringify(event, null, 2);
 }
 
-function finishSimulation(event, description) {
-  showPreview(event);
-  addMessage("bot", `${description} A prévia fictícia foi montada, mas não foi enviada nem salva no Histórico.`);
+async function submitSelection(flow, value, label) {
+  choices.replaceChildren();
+
+  try {
+    const result = flow === "mood"
+      ? await conversation.submitMood(value)
+      : await conversation.submitComplaint(value);
+    addMessages(result.messages);
+    showPreview(result.event);
+  } catch {
+    addMessage("user", label);
+    addMessage("bot", "Não foi possível concluir a simulação. Reinicie a conversa para tentar novamente.");
+  }
+
   showMainActions();
 }
 
 function startMoodFlow() {
-  addMessage("user", "Registrar humor");
-  addMessage("bot", "Como você está se sentindo agora? Escolha uma opção.");
-  choices.replaceChildren(...moodOptions.map(({ label, value }) => makeButton(label, () => {
-    addMessage("user", label);
-    const event = buildDemoEvent("HUMOR", "humor", value);
-    finishSimulation(event, "Simulação de humor pronta.");
-  })));
+  showOptions("mood", conversation.startMood());
 }
 
 function startComplaintFlow() {
-  addMessage("user", "Registrar queixa");
-  addMessage("bot", "Escolha um exemplo fictício para esta simulação.");
-  choices.replaceChildren(...fictionalComplaints.map(({ label, value }) => makeButton(label, () => {
-    addMessage("user", label);
-    const event = buildDemoEvent("QUEIXA", "relato", value);
-    finishSimulation(event, "Simulação de queixa pronta.");
-  })));
+  showOptions("complaint", conversation.startComplaint());
 }
 
 function resetConversation() {
+  conversation.reset();
   messages.replaceChildren();
   choices.replaceChildren();
   payloadCode.textContent = "";
   payload.hidden = true;
   previewEmpty.hidden = false;
-  nextDemoMessage = 1;
-  addMessage("bot", "Olá! Sou o simulador do CommitAndPray. Posso ajudar a registrar um humor ou uma queixa fictícia.");
-  addMessage("bot", "O que você gostaria de fazer?");
+  addMessages(conversation.welcome());
   showMainActions();
 }
 
