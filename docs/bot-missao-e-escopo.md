@@ -1,5 +1,5 @@
 ---
-status: proposta
+status: aprovado
 area: bot
 tags:
   - bot
@@ -9,7 +9,7 @@ tags:
 
 # Missão do bot e recorte do MVP
 
-Esta nota propõe uma missão inicial para orientar o trabalho do bot. A escolha final de produto ainda depende do alinhamento do grupo.
+Esta nota registra o escopo do piloto do bot aprovado por Arthur. O quadro de execução e auditoria fica em [Missões do bot](missoes-bot.md).
 
 ## Missão recomendada
 
@@ -66,8 +66,8 @@ Os quatro primeiros cenários de registro seguem o [guia de transferência e cha
 
 ## Dependências antes de conectar o bot
 
-- Confirmar com o grupo se a missão principal é o diário de bem-estar ou o autoatendimento MediLink.
-- Definir quem revisa as dicas e quais fontes serão aceitas.
+- Iniciar a integração somente depois que o serviço do Histórico e seu contrato estiverem disponíveis e confirmados.
+- Se autoatendimento e dicas entrarem em uma etapa futura, definir quem revisa o conteúdo e quais fontes serão aceitas.
 - Implementar o serviço de registros por conta e o vínculo entre remetente e conta antes de integrar o canal.
 - Resolver a configuração de banco e migrações descrita de forma divergente no README e na configuração atual do backend.
 - Manter o simulador local como primeiro canal de demonstração; integrar WhatsApp depois de validar o fluxo.
