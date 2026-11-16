@@ -1,3 +1,13 @@
 spring:
   application:
     name: cuidado-feminino-api
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:saude_feminina}
+    username: ${DB_USER:saude}
+    password: ${DB_PASSWORD:saude_dev}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
