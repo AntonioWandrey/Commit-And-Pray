@@ -85,23 +85,22 @@ Clientes (planejado):
 Commit-And-Pray/
 ├─ backend/
 │  └─ cuidado-feminino-api/
-│     ├─ compose.yaml            # PostgreSQL local
+│     ├─ docker-compose.yaml     # PostgreSQL local
 │     ├─ .env.example            # variáveis do banco
 │     ├─ pom.xml
 │     └─ src/
 │        ├─ main/
 │        │  ├─ java/br/com/unifebe/saude/api/
 │        │  │  ├─ CuidadoFemininoApiApplication.java
-│        │  │  ├─ contas/        # cada módulo: web, application, domain
-│        │  │  ├─ ciclo/
+│        │  │  ├─ <modulo>/      # cada módulo: web, application, domain
 │        │  │  └─ shared/
 │        │  └─ resources/
-│        │     ├─ application.yml
+│        │     ├─ application.yaml
 │        │     ├─ application-dev.yml
 │        │     └─ db/migration/  # migrações Flyway
 │        └─ test/java/br/com/unifebe/saude/api/
 ├─ docs/
-│  ├─ especificacao/             # requisitos, MER e diagramas
+│  ├─ especificacoes/            # requisitos, MER e diagramas
 │  └─ decisoes/                  # registros de decisões de arquitetura
 ├─ AGENTS.md  CLAUDE.md  CODEX.md
 └─ README.md
@@ -110,8 +109,8 @@ Commit-And-Pray/
 Cada módulo fica diretamente sob o pacote base `br.com.unifebe.saude.api`, com esta forma:
 
 ```
-ciclo/
-├─ CicloModuloApi.java   # interface pública do módulo
+<modulo>/
+├─ <Modulo>ModuloApi.java   # interface pública do módulo
 ├─ web/                  # controllers e DTOs
 ├─ application/          # casos de uso
 └─ domain/               # entidades e regras
@@ -177,7 +176,7 @@ ciclo/
 | `DB_USER` | `saude` |
 | `DB_PASSWORD` | `saude_dev` |
 
-O `.env` é lido pelo Docker Compose, mas **não** pelo IntelliJ. O `application.yml` repete os mesmos valores padrão, então a API sobe sem configuração extra.
+O `.env` é lido pelo Docker Compose, mas **não** pelo IntelliJ. O `application.yaml` repete os mesmos valores padrão, então a API sobe sem configuração extra.
 
 ### Porta 5432 ocupada
 
@@ -234,7 +233,7 @@ O esquema é criado **somente** por migrações Flyway, em `src/main/resources/d
 
 ## Documentação
 
-- `docs/especificacao/`: especificação de requisitos e modelagem (requisitos funcionais e não funcionais, regras de negócio, casos de uso, MER, diagrama de classes e de componentes).
+- `docs/especificacoes/`: especificação de requisitos e modelagem (requisitos funcionais e não funcionais, regras de negócio, casos de uso, MER, diagrama de classes e de componentes).
 - `docs/decisoes/`: registros de decisões de arquitetura.
 - `AGENTS.md`, `CLAUDE.md` e `CODEX.md`: instruções para assistentes de código.
 

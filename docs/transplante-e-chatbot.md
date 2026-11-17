@@ -4,20 +4,20 @@ O primeiro fluxo de demonstração é uma conversa com uma conta fictícia. A pe
 
 ## O que a base oferece
 
-A origem é o arquivo `cuidado-feminino-fullstack-main.zip`, do repositório `AntonioWandrey/cuidado-feminino-fullstack` no commit `c285c2ef06a8b6d2d14ba575473e5141a3b97889`. A [API transferida](../backend/cuidado-feminino-api) mantém o backend Java 21 com Spring Boot e MySQL, o Maven Wrapper, as migrações `V1` e `V2`, o registro de saúde e o módulo de ciclos. Veja os [passos de execução local](../README.md#rodar-a-api-localmente) para preparar um schema novo.
+A origem é o arquivo `cuidado-feminino-fullstack-main.zip`, do repositório `AntonioWandrey/cuidado-feminino-fullstack` no commit `c285c2ef06a8b6d2d14ba575473e5141a3b97889`. A [API transferida](../backend/cuidado-feminino-api) mantém o backend Java 21 com Spring Boot e PostgreSQL, o Maven Wrapper e as migrações `V1` e `V2`. O registro de saúde e o módulo de ciclos da origem não fazem parte do código atual. Veja os [passos de execução local](../README.md#rodar-a-api-localmente) para preparar um banco novo.
 
 | Parte da base | Uso no MVP |
 | --- | --- |
 | Infraestrutura da API e migrações | Servem de ponto de partida. O histórico por conta entra em uma nova migração. |
-| Registro de saúde legado | Referência para entender o formulário antigo. O modelo e a consulta são globais, sem vínculo com conta ou remetente. O formulário web ainda colocava humor em `faseVida` e enviava apenas parte dos campos selecionados. |
-| Módulo de ciclos | Fica disponível na base. A integração dele com o app pode esperar até a jornada de conversa e histórico funcionar. |
+| Registro de saúde da origem | Descartado na transferência; serve só como referência do formulário antigo. O modelo e a consulta são globais, sem vínculo com conta ou remetente. O formulário web ainda colocava humor em `faseVida` e enviava apenas parte dos campos selecionados. |
+| Módulo de ciclos | Não foi transferido. Pode ser recriado depois que a jornada de conversa e histórico funcionar. |
 | Interface web antiga | A transferência abrange o backend. No React Native, recrie o fluxo de check-in, as opções de humor e os padrões visuais úteis. O calendário e o perfil da web mantinham estado em memória. O conteúdo das trilhas era estático. |
 
-O bot precisa gravar num histórico associado à conta para entregar cada mensagem à pessoa certa. Escrever no registro legado misturaria entradas de pessoas diferentes e deixaria sem resposta a pergunta central da demo, que é de quem é cada registro. A interface de histórico deve consultar os registros da conta identificada pelo servidor.
+O bot precisa gravar num histórico associado à conta para entregar cada mensagem à pessoa certa. Reaproveitar o registro de saúde da origem misturaria entradas de pessoas diferentes e deixaria sem resposta a pergunta central da demo, que é de quem é cada registro. A interface de histórico deve consultar os registros da conta identificada pelo servidor.
 
 ## Validação da base importada
 
-O Maven 3.9.12 compilou e empacotou a API com JDK 21 em `mvn verify`. O teste de contexto passou em um schema MySQL vazio. O Flyway aplicou V1 e V2 automaticamente, e o Hibernate validou a estrutura. Em outro schema vazio, o JAR iniciou, gravou um registro fictício e o devolveu após reiniciar. V1 e V2 apareceram uma única vez no histórico de migrações. O MySQL 9.6 usado no ensaio gerou um aviso de versão acima da faixa verificada pelo Flyway.
+O Maven 3.9.12 compilou e empacotou a API com JDK 21 em `mvn verify`. O teste de contexto passou em um schema MySQL vazio (a base original usava MySQL; a API atual usa PostgreSQL). O Flyway aplicou V1 e V2 automaticamente, e o Hibernate validou a estrutura. Em outro schema vazio, o JAR iniciou, gravou um registro fictício e o devolveu após reiniciar. V1 e V2 apareceram uma única vez no histórico de migrações. O MySQL 9.6 usado nesse ensaio gerou um aviso de versão acima da faixa verificada pelo Flyway. Esse resultado é histórico e deve ser repetido em PostgreSQL.
 
 ## Primeiro passo para o Arthur
 
@@ -41,7 +41,7 @@ Monte um simulador de conversa local com uma conta fictícia, um identificador f
 
 ## Ordem de implementação
 
-1. Subir a API com um MySQL local vazio e verificar migrações e teste de contexto. Registrar o resultado antes de mudar o modelo.
+1. Subir a API com um PostgreSQL local vazio (`docker compose up`) e verificar migrações e teste de contexto. Registrar o resultado antes de mudar o modelo.
 2. Adicionar uma migração para conta de demonstração, vínculo com canal e registros de bem-estar. Implementar gravação idempotente e consulta do histórico por conta no backend.
 3. Conectar o simulador do Arthur ao serviço e implementar a tela de Histórico no app React Native. Validar o cenário completo com dados sintéticos.
 4. Integrar o WhatsApp quando houver ambiente de teste. Validar a origem dos eventos, tratar reenvios e rodar o mesmo cenário. Manter o simulador identificado para a apresentação se a integração real ainda estiver pendente.
