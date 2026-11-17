@@ -6,12 +6,16 @@ Nov 12, 2026 · @Pietro
 
 O Minha Saúde Feminina é um aplicativo gratuito que informa, orienta e acompanha a saúde da mulher em cada fase da vida, sem substituir o atendimento na UBS. Esta especificação deriva dos dois documentos do projeto e marca como **Derivado** tudo o que foi inferido para tornar o sistema viável.
 
+As rotas, os contratos e os erros da API ficam na aba API.
+
 ### Fontes
 
 | Sigla | Documento | O que traz |
 | --- | --- | --- |
 | A | Apresentação "Minha Saúde Feminina" (7 slides) | Proposta, problema encontrado, fases da vida atendidas, vínculo com a UBS |
 | E | "Estrutura geral do aplicativo", Projeto de Intervenção, 4ª fase, 2025.2 (9 páginas) | Cadastro inteligente, painéis por perfil, conteúdos e ferramentas |
+| G | Guia de transferência e chatbot (docs/transplante-e-chatbot.md, no repositório) | Primeiro fluxo de demonstração, contrato proposto do bot e ordem de implementação |
+| T | Acordo do time sobre o contrato do piloto (novembro de 2026) | Rotas do bot e do histórico, idempotência, erros e ambiente local |
 
 A coluna **Origem** das tabelas usa a sigla e o slide ou página, por exemplo "E p.3" ou "A s.2". Prioridades: **Essencial** (sem ele o app não cumpre a proposta), **Importante** (primeira evolução) e **Desejável**.
 
@@ -23,6 +27,7 @@ A coluna **Origem** das tabelas usa a sigla e o slide ou página, por exemplo "E
 | Equipe de saúde (curadoria) | Secundário | Publica e revisa conteúdos e responde às perguntas anônimas | Derivado (A s.1: parceria Medicina e S.I.) |
 | Tempo (agendador) | Sistema | Dispara lembretes, alertas e notificações semanais nas datas previstas | E p.3, p.4 |
 | Sistema de agendamento da UBS | Externo | Recebe a usuária pelo link de agendamento; não troca dados com o app | E p.3 |
+| Canal de conversa (bot) | Externo | Leva à API as mensagens que a usuária envia pelo simulador ou pelo WhatsApp; não escolhe a conta de destino | Derivado (G) |
 
 ### Perfis de usuária
 
@@ -43,7 +48,7 @@ Uma usuária tem um perfil etário e pode acumular situações e condições; a 
 
 ## 2. Requisitos funcionais
 
-São 47 requisitos funcionais em 7 módulos; 43 vêm direto dos documentos e 4 são derivados. As prioridades são uma proposta inicial para validação com a equipe.
+São 51 requisitos funcionais em 8 módulos; 43 vêm direto dos documentos e 8 são derivados. As prioridades são uma proposta inicial para validação com a equipe.
 
 ### Módulo 1: Cadastro, acesso e perfil
 
@@ -127,9 +132,18 @@ São 47 requisitos funcionais em 7 módulos; 43 vêm direto dos documentos e 4 s
 | RF46 | Listar UBSs acolhedoras com profissionais LGBTQIA+ friendly | Desejável | E p.6 |
 | RF47 | Permitir à equipe de saúde moderar e responder às perguntas anônimas | Importante | Derivado (E p.2) |
 
+### Módulo 8: Diário por conversa
+
+| ID | O sistema deve | Prioridade | Origem |
+| --- | --- | --- | --- |
+| RF48 | Registrar o humor informado em uma conversa com o bot, a partir de opções guiadas | Essencial | Derivado (G) |
+| RF49 | Registrar uma queixa relatada em uma conversa com o bot | Essencial | Derivado (G) |
+| RF50 | Exibir no app o histórico do diário da conta, com data, tipo e origem de cada entrada | Essencial | Derivado (G) |
+| RF51 | Vincular um remetente de canal de conversa à conta, de modo que só a titular consiga criar o vínculo | Essencial | Derivado (G) |
+
 ## 3. Requisitos não funcionais
 
-São 16 requisitos não funcionais; os de privacidade e segurança pesam mais, porque o app guarda dados de saúde íntima. As métricas numéricas são propostas, pois os documentos não as definem.
+São 18 requisitos não funcionais; os de privacidade e segurança pesam mais, porque o app guarda dados de saúde íntima. As métricas numéricas são propostas, pois os documentos não as definem.
 
 | ID | Categoria | Requisito | Origem |
 | --- | --- | --- | --- |
@@ -149,6 +163,8 @@ São 16 requisitos não funcionais; os de privacidade e segurança pesam mais, p
 | RNF14 | Uso offline | Calendário, registros e lembretes funcionam sem internet e sincronizam quando houver conexão | Derivado (A s.2) |
 | RNF15 | Disponibilidade | A API fica disponível em 99% do mês | Derivado |
 | RNF16 | Manutenibilidade | Conteúdos, calendários de exames e textos de alerta são alterados pela curadoria sem publicar nova versão do app | Derivado |
+| RNF17 | Idempotência | Reenviar a mesma mensagem de um canal de conversa não cria outra entrada; a API devolve a confirmação original | Derivado (G) |
+| RNF18 | Compatibilidade da API | As rotas têm a versão no caminho (/api/v1); mudança incompatível só entra em uma versão nova | Derivado |
 
 ## 4. Regras de negócio
 
@@ -200,11 +216,11 @@ São 24 regras; as que trazem fórmulas ou limites clínicos estão marcadas com
 
 ## 5. Casos de uso
 
-São 22 casos de uso: 16 iniciados pela usuária e 6 de apoio, executados pelo sistema, pelo agendador, pela equipe de saúde ou em conjunto com a UBS.
+São 25 casos de uso: 18 iniciados pela usuária, 1 pelo canal de conversa e 6 de apoio, executados pelo sistema, pelo agendador, pela equipe de saúde ou em conjunto com a UBS.
 
-&#91;embedded content: diagrama de casos de uso · 4 atores, 22 casos, 4 inclusões e 1 extensão\]
+&#91;embedded content: diagrama de casos de uso · 5 atores, 25 casos, 4 inclusões e 1 extensão\]
 
-Os casos à esquerda seguem a ordem UC01 a UC16 da lista abaixo; à direita estão UC17 a UC22. As setas tracejadas mostram o que o cadastro e o registro do ciclo sempre executam e o que o guia de sintomas pode acionar.
+Os casos à esquerda seguem a ordem UC01 a UC16 da lista abaixo, seguidos de UC24, UC25 e UC23; à direita estão UC17 a UC22. As setas tracejadas mostram o que o cadastro e o registro do ciclo sempre executam e o que o guia de sintomas pode acionar.
 
 ### Lista de casos de uso
 
@@ -232,6 +248,9 @@ Os casos à esquerda seguem a ordem UC01 a UC16 da lista abaixo; à direita est�
 | UC20 | Acessar agendamento na UBS | Usuária e sistema da UBS, estende UC13 | RF45, RF46 |
 | UC21 | Gerenciar conteúdos | Equipe de saúde | RF16 |
 | UC22 | Responder perguntas anônimas | Equipe de saúde | RF47 |
+| UC23 | Registrar humor e queixa por conversa | Canal de conversa, em nome da usuária | RF48, RF49 |
+| UC24 | Consultar histórico do diário | Usuária | RF50 |
+| UC25 | Vincular canal de conversa à conta | Usuária e canal de conversa | RF51 |
 
 ### UC01: Realizar cadastro inteligente
 
@@ -349,50 +368,78 @@ Fluxos alternativos:
 - 3a. Modo confidencial ativo: a mensagem é genérica, sem conteúdo sensível (RNF07).
 - 4a. Aparelho sem internet: o lembrete local do app dispara no horário (RNF14).
 
+### UC23: Registrar humor e queixa por conversa
+
+**Ator:** Canal de conversa, em nome da usuária. **Pré-condição:** remetente vinculado à conta (UC25). **Pós-condição:** entrada gravada no diário da conta e confirmada na conversa. **Regras:** RNF05, RNF17.
+
+Fluxo principal:
+
+1. A usuária abre a conversa e escolhe registrar humor ou registrar queixa.
+2. O bot mostra as opções de humor ou pede o relato da queixa.
+3. A usuária responde.
+4. O bot envia a mensagem à API, com o identificador da mensagem e o do remetente.
+5. O sistema encontra a conta pelo vínculo do remetente e grava a entrada.
+6. O bot confirma o registro, sem repetir o relato.
+7. A usuária vê a entrada no histórico do app (UC24).
+
+Fluxos alternativos:
+
+- 5a. Remetente sem vínculo: o sistema não grava nada e o bot orienta a vincular o canal pelo app (UC25).
+- 5b. Mensagem reenviada: o sistema devolve a confirmação original, sem duplicar a entrada (RNF17).
+- 5c. Falha ao gravar: o bot informa que o registro não foi feito e permite tentar de novo.
+
 ## 6. Modelagem do banco (MER)
 
-O modelo tem 25 entidades: USUARIA é o centro, 13 entidades guardam os dados dela e 11 são catálogos e conteúdos mantidos pela equipe de saúde. Nomes sem acento e em maiúsculas já seguem o padrão das tabelas.
+O modelo tem 27 entidades: USUARIO é o centro, 15 entidades guardam os dados dela e 11 são catálogos e conteúdos mantidos pela equipe de saúde. Nomes sem acento e em maiúsculas já seguem o padrão das tabelas.
 
-&#91;embedded content: modelo entidade-relacionamento · 25 entidades, notação pé de galinha\]
+&#91;embedded content: modelo entidade-relacionamento · 27 entidades, notação pé de galinha\]
 
-Cada linha liga um lado "um" (traço) a um lado "muitos" (pé de galinha). PERGUNTA\_ANONIMA se liga a PERFIL e a PROFISSIONAL, nunca a USUARIA; várias usuárias podem ter a mesma UBS de referência.
+Cada linha liga um lado "um" (traço) a um lado "muitos" (pé de galinha). PERGUNTA\_ANONIMA se liga a PERFIL e a PROFISSIONAL, nunca a USUARIO; várias usuárias podem ter a mesma UBS de referência.
 
 ### Dicionário de entidades
 
 | Entidade | Atributos | Descrição |
 | --- | --- | --- |
-| USUARIA | **id (PK)**, nome, nome\_social, identidade\_genero, data\_nascimento, email, senha\_hash, visual\_neutro, modo\_confidencial, ubs\_id (FK), criado\_em | Pessoa cadastrada no app |
+| USUARIO | **id (PK)**, nome, nome\_social, identidade\_genero, data\_nascimento, email, senha\_hash, visual\_neutro, modo\_confidencial, ubs\_id (FK), consentimento\_saude\_em, versao\_termo, criado\_em | Pessoa cadastrada no app |
 | PERFIL | **id (PK)**, codigo, nome, tipo, idade\_min, idade\_max | Catálogo de perfis: etários, situações, condições e identidade |
-| USUARIA\_PERFIL | **id (PK)**, usuaria\_id (FK), perfil\_id (FK), data\_inicio, data\_fim | Perfis ativos e históricos de cada usuária |
+| USUARIO\_PERFIL | **id (PK)**, usuario\_id (FK), perfil\_id (FK), data\_inicio, data\_fim | Perfis ativos e históricos de cada usuária |
 | CONTEUDO | **id (PK)**, profissional\_id (FK), titulo, corpo, formato, categoria, publicado, revisado\_em | Material educativo e respostas do chat automático |
 | CONTEUDO\_PERFIL | **conteudo\_id (PK, FK)**, **perfil\_id (PK, FK)** | Liga cada conteúdo aos perfis que o enxergam |
 | PROFISSIONAL | **id (PK)**, nome, email, senha\_hash, registro\_profissional, papel | Membro da equipe de saúde que cuida da curadoria |
-| PERGUNTA\_ANONIMA | **id (PK)**, perfil\_id (FK), profissional\_id (FK), texto, resposta, status, criada\_em, respondida\_em | Pergunta da caixinha; não tem chave para USUARIA |
-| CICLO | **id (PK)**, usuaria\_id (FK), data\_inicio, data\_fim, duracao\_dias | Cada ciclo menstrual registrado |
-| REGISTRO\_DIARIO | **id (PK)**, usuaria\_id (FK), data, fluxo, humor, ansiedade, relacao\_sexual, observacao | Anotações de um dia no calendário |
+| PERGUNTA\_ANONIMA | **id (PK)**, perfil\_id (FK), profissional\_id (FK), texto, resposta, status, criada\_em, respondida\_em | Pergunta da caixinha; não tem chave para USUARIO |
+| CICLO | **id (PK)**, usuario\_id (FK), data\_inicio, data\_fim, duracao\_dias | Cada ciclo menstrual registrado |
+| REGISTRO\_DIARIO | **id (PK)**, usuario\_id (FK), data, fluxo, humor, ansiedade, relacao\_sexual, observacao | Anotações de um dia no calendário |
 | SINTOMA | **id (PK)**, nome, categoria, sinal\_alerta | Catálogo de sintomas: TPM, escape, corrimento, dor, ovulatórios, menopausa |
 | REGISTRO\_SINTOMA | **registro\_id (PK, FK)**, **sintoma\_id (PK, FK)**, intensidade | Sintomas marcados em um registro diário |
 | METODO | **id (PK)**, nome, tipo, eficacia, intervalo\_dias | Catálogo de métodos contraceptivos |
-| USO\_METODO | **id (PK)**, usuaria\_id (FK), metodo\_id (FK), data\_inicio, data\_fim, horario, proxima\_data | Método em uso e dados para os alertas |
-| GESTACAO | **id (PK)**, usuaria\_id (FK), dum, dpp, data\_parto, tipo\_parto, status | Gestação e puerpério de uma usuária |
+| USO\_METODO | **id (PK)**, usuario\_id (FK), metodo\_id (FK), data\_inicio, data\_fim, horario, proxima\_data | Método em uso e dados para os alertas |
+| GESTACAO | **id (PK)**, usuario\_id (FK), dum, dpp, data\_parto, tipo\_parto, status | Gestação e puerpério de uma usuária |
 | MOVIMENTO\_FETAL | **id (PK)**, gestacao\_id (FK), data\_hora, quantidade | Contagem de movimentos fetais |
 | MAMADA | **id (PK)**, gestacao\_id (FK), inicio, duracao\_min, lado | Mamadas registradas no puerpério |
-| MEDICAMENTO | **id (PK)**, usuaria\_id (FK), nome, dose, horario, efeitos\_colaterais, ativo | Medicamento em uso, inclusive antirretrovirais |
+| MEDICAMENTO | **id (PK)**, usuario\_id (FK), nome, dose, horario, efeitos\_colaterais, ativo | Medicamento em uso, inclusive antirretrovirais |
 | CONDICAO | **id (PK)**, nome, cronica | Catálogo: endometriose, SOP, mioma, adenomiose, menopausa precoce, HIV |
-| USUARIA\_CONDICAO | **usuaria\_id (PK, FK)**, **condicao\_id (PK, FK)**, data\_diagnostico, em\_tratamento | Condições de saúde declaradas pela usuária |
-| LEMBRETE | **id (PK)**, usuaria\_id (FK), tipo, titulo, data\_hora, recorrencia, automatico, status | Exame, vacina, consulta, medicamento ou método a lembrar |
+| USUARIO\_CONDICAO | **usuario\_id (PK, FK)**, **condicao\_id (PK, FK)**, data\_diagnostico, em\_tratamento | Condições de saúde declaradas pela usuária |
+| LEMBRETE | **id (PK)**, usuario\_id (FK), tipo, titulo, data\_hora, recorrencia, automatico, status | Exame, vacina, consulta, medicamento ou método a lembrar |
 | NOTIFICACAO | **id (PK)**, lembrete\_id (FK), mensagem, enviada\_em, lida | Cada envio feito a partir de um lembrete |
 | QUESTIONARIO | **id (PK)**, tipo, titulo | Quiz de métodos, checklists e escalas de avaliação |
 | QUESTAO | **id (PK)**, questionario\_id (FK), enunciado, opcoes, ordem | Item de um questionário |
-| PREENCHIMENTO | **id (PK)**, usuaria\_id (FK), questionario\_id (FK), data, respostas, resultado | Um questionário respondido pela usuária |
+| PREENCHIMENTO | **id (PK)**, usuario\_id (FK), questionario\_id (FK), data, respostas, resultado | Um questionário respondido pela usuária |
 | UBS | **id (PK)**, nome, endereco, telefone, link\_agendamento, acolhedora\_lgbtqia | Unidades de saúde e seus links de agendamento |
+| VINCULO\_CANAL | **id (PK)**, usuario\_id (FK), canal, remetente\_ref, codigo\_hash, codigo\_expira\_em, confirmado\_em, revogado\_em | Liga um remetente de um canal de conversa a uma conta; nasce com o código e ganha o remetente na confirmação |
+| ENTRADA\_DIARIO | **id (PK)**, usuario\_id (FK), tipo, humor, relato, origem, remetente\_ref, mensagem\_id, recebida\_em, criado\_em | Humor ou queixa recebidos por um canal de conversa |
 
 ### Decisões de modelagem
 
-- PERGUNTA\_ANONIMA guarda só o perfil etário, sem chave para USUARIA, para garantir o anonimato (RNF08, RN23).
-- USUARIA\_PERFIL, CONTEUDO\_PERFIL, REGISTRO\_SINTOMA e USUARIA\_CONDICAO resolvem os relacionamentos N:N.
+- PERGUNTA\_ANONIMA guarda só o perfil etário, sem chave para USUARIO, para garantir o anonimato (RNF08, RN23).
+- USUARIO\_PERFIL, CONTEUDO\_PERFIL, REGISTRO\_SINTOMA e USUARIO\_CONDICAO resolvem os relacionamentos N:N.
 - LEMBRETE é único para exames, vacinas, consultas, medicamentos e métodos; o campo tipo diferencia e o campo automatico marca os gerados por perfil (RN20).
 - GESTACAO cobre também o puerpério: data\_parto preenchida inicia a contagem dos 6 meses (RN07).
+
+* VINCULO\_CANAL e ENTRADA\_DIARIO são derivadas do guia do chatbot (G) e não estão nos documentos de origem.
+* ENTRADA\_DIARIO é separada de REGISTRO\_DIARIO: a primeira guarda o que chega por conversa, com canal e mensagem de origem; a segunda é a anotação do dia no calendário.
+* ENTRADA\_DIARIO tem unicidade em origem, remetente\_ref e mensagem\_id, para o reenvio não duplicar a entrada (RNF17).
+* VINCULO\_CANAL guarda o código de vínculo só como hash; o remetente\_ref é preenchido quando o bot confirma o código.
+* USUARIO guarda consentimento\_saude\_em e versao\_termo, exigidos pela RNF05 e já criados na migração V2.
 
 ## 7. Diagrama de classes
 
@@ -400,7 +447,9 @@ As classes de domínio espelham o MER e acrescentam comportamento: cálculos em 
 
 &#91;embedded content: diagrama de classes · 25 classes, 1 serviço, 1 hierarquia\]
 
-Questionario é abstrata: Quiz, Checklist e Escala implementam calcularResultado() cada um à sua maneira. PerguntaAnonima não tem associação com Usuaria, só com Perfil e Profissional.
+Questionario é abstrata: Quiz, Checklist e Escala implementam calcularResultado() cada um à sua maneira. PerguntaAnonima não tem associação com Usuario, só com Perfil e Profissional.
+
+O diagrama ainda não mostra VinculoCanal e EntradaDiario, as duas classes que o diário por conversa acrescentou ao MER.
 
 ### Enumerações
 
@@ -414,13 +463,16 @@ Questionario é abstrata: Quiz, Checklist e Escala implementam calcularResultado
 | StatusPergunta | RECEBIDA, RESPONDIDA, ARQUIVADA |
 | Fluxo | AUSENTE, ESCAPE, LEVE, MODERADO, INTENSO |
 | TipoParto | VAGINAL, CESAREA |
+| TipoEntrada | HUMOR, QUEIXA |
+| Canal | SIMULADOR, WHATSAPP |
+| HumorDiario | BEM, NORMAL, CANSADA, DESCONFORTAVEL (na API, em minúsculas) |
 
 ### Onde ficam as regras
 
 | Classe | Método | Regra aplicada |
 | --- | --- | --- |
 | Perfil | aplicavelA() | RN01, RN05 |
-| Usuaria | alterarSituacao() | RN04, RN05, RN06, RN08 |
+| Usuario | alterarSituacao() | RN04, RN05, RN06, RN08 |
 | AnalisadorCiclo | proximaMenstruacao(), janelaFertil(), irregular() | RN10, RN11, RN12 |
 | UsoMetodo | proximaData() | RN13 |
 | Gestacao | idadeGestacional(), dpp(), emPuerperio() | RN07, RN16 |
@@ -430,17 +482,17 @@ Questionario é abstrata: Quiz, Checklist e Escala implementam calcularResultado
 
 ## 8. Diagrama de componentes
 
-A solução tem três camadas: dois clientes (app móvel e painel web de curadoria), um backend monolítico modular com 8 módulos e a camada de dados. Os documentos não definem tecnologias, então a arquitetura é uma proposta e não fixa linguagem nem framework.
+A solução tem três camadas: três clientes (app móvel, painel web de curadoria e bot de conversa), um backend monolítico modular com 10 módulos e a camada de dados. Os documentos de origem não definem tecnologias; o time escolheu Java 21 com Spring Boot na API, React Native com Expo no app e PostgreSQL no banco.
 
-&#91;embedded content: diagrama de componentes · 2 clientes, API com 8 módulos, 3 serviços de apoio\]
+&#91;embedded content: diagrama de componentes · 3 clientes, API com 10 módulos, 3 serviços de apoio\]
 
-As notificações saem da API para o serviço de push e chegam ao aparelho. O agendamento na UBS é só um link aberto pelo app, sem troca de dados.
+As notificações saem da API para o serviço de push e chegam ao aparelho. O agendamento na UBS é só um link aberto pelo app, sem troca de dados. O bot de conversa é o terceiro cliente e só alcança a rota de eventos do módulo Canais.
 
 ### Módulos do monólito
 
 | Módulo | Responsabilidade | Casos de uso | Entidades principais |
 | --- | --- | --- | --- |
-| Contas e perfis | Cadastro, autenticação, modo confidencial e perfis ativos | UC01, UC02, UC03 | USUARIA, USUARIA\_PERFIL, USUARIA\_CONDICAO |
+| Contas e perfis | Cadastro, autenticação, modo confidencial, perfis ativos e vínculo com canais de conversa | UC01, UC02, UC03, UC25 | USUARIO, USUARIO\_PERFIL, USUARIO\_CONDICAO, VINCULO\_CANAL |
 | Personalização | Decide quais painéis e conteúdos cada usuária enxerga | UC17 | PERFIL, CONTEUDO\_PERFIL |
 | Ciclo e fertilidade | Calendário, análise do ciclo, janela fértil e alerta de irregularidade | UC05, UC06, UC18 | CICLO, REGISTRO\_DIARIO, SINTOMA |
 | Gestação e puerpério | Idade gestacional, DPP, movimentos fetais, mamadas e humor | UC09, UC10 | GESTACAO, MOVIMENTO\_FETAL, MAMADA |
@@ -448,24 +500,26 @@ As notificações saem da API para o serviço de push e chegam ao aparelho. O ag
 | Lembretes | Agenda da usuária, lembretes automáticos e disparo de notificações | UC11, UC19 | LEMBRETE, NOTIFICACAO |
 | Conteúdo e dúvidas | Conteúdos, guia de sintomas, chat automático, perguntas anônimas e UBSs | UC04, UC13, UC14, UC15, UC20, UC21, UC22 | CONTEUDO, PERGUNTA\_ANONIMA, UBS |
 | Questionários | Quiz de métodos, checklists e escalas de avaliação | UC07, UC16 | QUESTIONARIO, QUESTAO, PREENCHIMENTO |
+| Diário | Humor e queixa recebidos por conversa, sem duplicar no reenvio, e histórico por conta | UC23, UC24 | ENTRADA\_DIARIO |
+| Canais | Recebe os eventos do bot e do simulador, confere o canal e encaminha às contas e ao diário | UC23, UC25 | Nenhuma: usa as interfaces de Contas e de Diário |
 
 ### Organização no GitHub
 
-Front e back ficam no mesmo repositório GitHub (monorepo): o backend é um único deploy e cada módulo é uma pasta com fronteira explícita. Se preferirem repositórios separados, a estrutura de `apps/` se divide sem mudar os módulos.
+Front e back ficam no mesmo repositório GitHub (monorepo), o Commit-And-Pray: o backend é um único deploy e cada módulo é um pacote com fronteira explícita. A estrutura completa e as convenções de trabalho estão em Estrutura do repositório Commit-And-Pray — proposta para o time.
 
 ```text
-minha-saude-feminina/
-├─ apps/
-│  ├─ mobile/          # app Android e iOS
-│  ├─ curadoria/       # painel web da equipe de saúde
-│  └─ api/             # monólito modular (um só deploy)
-│     └─ src/
-│        ├─ modules/
-│        │  ├─ contas/  personalizacao/  ciclo/  gestacao/
-│        │  └─ metodos/  lembretes/  conteudo/  questionarios/
-│        └─ shared/     # autenticação, erros, utilitários
-├─ docs/               # esta especificação, MER e decisões (ADRs)
-└─ .github/workflows/  # build, testes e verificação de fronteiras
+Commit-And-Pray/
+├─ backend/cuidado-feminino-api/   # monólito modular (um só deploy)
+│  └─ src/main/java/br/com/unifebe/saude/api/
+│     ├─ contas/  ciclo/  diario/  canais/
+│     ├─ personalizacao/  gestacao/  metodos/
+│     ├─ lembretes/  conteudo/  questionarios/
+│     └─ shared/                   # erros, segurança, utilitários
+├─ mobile/                         # app Android e iOS (Expo)
+├─ admin-web/                      # painel web da equipe de saúde
+├─ tools/simulador-bot/            # simulador local de conversa
+├─ docs/                           # especificação e decisões (ADRs)
+└─ .github/workflows/              # build, testes e verificação de fronteiras
 ```
 
 | Regra do monólito modular | Efeito |
@@ -478,7 +532,7 @@ minha-saude-feminina/
 
 ## 9. Premissas e pontos em aberto
 
-Quatro premissas sustentam os itens marcados como Derivado, e nove pontos precisam de decisão da equipe antes do desenvolvimento.
+Quatro premissas sustentam os itens marcados como Derivado, e oito pontos ainda precisam de decisão da equipe antes do desenvolvimento.
 
 ### Premissas adotadas
 
@@ -497,4 +551,6 @@ Quatro premissas sustentam os itens marcados como Derivado, e nove pontos precis
 - [ ] Definir o município ou as UBSs atendidas e qual sistema de agendamento será ligado (RF45, RF46).
 - [ ] Definir, com apoio jurídico, o consentimento para usuárias menores de 18 anos; a LGPD tem regra própria para crianças e adolescentes (art. 14).
 - [ ] Confirmar as prioridades propostas para os requisitos funcionais.
-- [ ] Escolher a pilha de tecnologia do app, da API e do banco.
+- [x] Escolher a pilha de tecnologia do app, da API e do banco.
+
+A pilha de tecnologia já foi escolhida, por isso o último item está marcado. As decisões pendentes sobre rotas, token e vínculo estão na seção 9 da aba API.
